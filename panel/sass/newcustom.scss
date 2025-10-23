@@ -1,0 +1,121 @@
+
+$colorOrange_1: #dd2e11;
+$colorOrange_2: #ef4023;
+$azul: #1204ff;
+$colorGrey_1: #434753;
+$colorGrey_2: #6a7f90;
+$colorGrey_3: #b7c6d0;
+$colorGrey_4: #e4eaf1;
+$colorGrey_5: #f1e9e2;
+$colorGrey_6: #fcfbf9;
+
+a, button, .animar, .enviar {
+    -webkit-transition: all 0.5s ease; /* Safari 3.1 to 6.0 */
+    -o-transition: all 0.5s ease;
+    moz-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+.navbar-brand {
+    h3 {
+        line-height: 95%;
+    }
+}
+.relList {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0 0 20px;
+    .itemRel {
+        width: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-start;
+        margin: 10px 0 0;
+        input[type=checkbox] {
+            margin-top: 0;
+        }
+        label {
+            width: calc(100% - 20px);
+            text-transform: uppercase;
+            font-size: 90%;
+            padding-left: 6px;
+            line-height: 110%;
+        }
+    }
+}
+
+
+.modal {
+    .modal-content {
+        .modal-body {
+            #fileList {
+                .olFileList {
+                }
+                .sortable {
+                    @extend .animar;
+                    &:hover {
+                        cursor: grab;
+                        background: $colorGrey_4;
+                    }
+                    &:active {
+                        cursor: grabbing;
+                    }
+                    .liFiles {
+                        margin-left: -15px;
+                        margin-right: -15px;
+                        padding: 0px 15px 10px;
+                        &::marker {
+                            line-height: 100%;
+                            opacity: 0;
+                        }
+                        .copete {
+                            color: white;
+                            background: darken($colorGrey_4,10%);
+                            margin: 2px 0px;
+                            width: 100%;
+                            padding: 6px 10px;
+                            border-radius: 4px;
+                            &::placeholder {
+                                color: white;
+                            }
+                            &:focus, &:hover {
+                                background: darken($colorGrey_3,10%);
+                            }
+                        }
+                        .btn {
+                            width: 100%;
+                            margin: 2px 0;    
+                            padding: 4px 12px;
+                            &:hover {
+                                color: white;
+                                background: darken($colorGrey_2, 15%);
+                            }
+                            label {
+                                margin-bottom: 0;
+                            }
+                            &.clsPublish {
+                                &:hover {
+                                    color: white;
+                                    background: darken($azul, 15%);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+@media (min-width: 992px) {
+
+    .relList {
+        .itemRel {
+            width: calc(50% - 10px);
+            margin: 0 10px 15px 0;
+        }
+    }
+}
+

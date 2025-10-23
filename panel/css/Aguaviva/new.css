@@ -1,0 +1,91 @@
+#menu {
+    padding: 10px 15px 30px;
+    font-family: 'Rubik', sans-serif !important;
+}
+ul {
+    padding-inline-start: 0;
+}
+.level-1 {
+    font-size: 125%;
+    font-weight: 600;
+}
+.level-1 li {
+    margin-top: 8px;
+    margin-bottom: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #b7c6d0;
+    padding-left: 15px;
+    
+}
+.level-2 li,
+.level-3 li {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-top: none;
+    padding-top: 0;
+    
+}
+
+.level-2 {
+    font-size: 90%;
+    font-weight: 500;
+}
+.level-3 {
+    font-size: 90%;
+    font-weight: 400;
+}
+button:hover {
+    color: #1203FF;
+
+}
+#menu form {
+    padding: 0 15px 0 60px;
+    width: 60vw;
+    max-width: 500px;
+}
+#menu form h3 {
+    margin: 15px 0 0;
+}
+#menu form .formItem {
+    border-bottom: 1px solid #6a7f90;
+    padding: 10px 0;
+}
+#menu form .formItem input {
+    padding: 8px 12px;
+    background: #e4eaf1;
+    font-size: 105%;
+    width: 100%;
+    border-radius: 6px;
+}
+#menu form .btnsuccess2 {
+    margin-top: 15px;
+}
+.uploadpic {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #6a7f90;
+    color: white;
+    width: 50%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 95%;
+}
+.uploadpic img {
+    margin: 0px 8px 2px 1px;
+}
+.uploadpic:hover {
+    background: #1203FF;
+
+}
+.submenu {
+    padding-left: 12px;
+}
+.submenutit {
+    font-weight: 600;
+    color:  #1203FF;
+}

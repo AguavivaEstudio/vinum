@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AACA,AAGG,YAHS,CACX,cAAc,CACb,WAAW,CACV,IAAI,CAAC;EACJ,UAAU,EAAE,mBAAmB;CAC/B",
+    "sources": [
+        "global_md.scss"
+    ],
+    "names": [],
+    "file": "global_md.css"
+}

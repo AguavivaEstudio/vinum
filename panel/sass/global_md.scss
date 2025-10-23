@@ -1,0 +1,20 @@
+
+#modalUpload {
+	.modal-content {
+		.modal-body {
+			form {
+				min-height: calc(100vh - 200px);
+			}
+		}
+	}
+}
+
+.custom-options {
+	max-width: 65vw;
+	.opciones {
+		span {
+			min-width: auto;
+			padding-right: 5px;
+		}
+	}
+}
