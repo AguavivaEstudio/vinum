@@ -1,48 +1,45 @@
-export interface IProject {
-  id: number
-  work_name: string
-  client: string
-  agency: string
-  thumbnail: string[]
-  video_url: string
-  editor: number
-  director: string
-  featured: number
-}
-export interface IEditors {
+export interface IWine {
   id: number
   name: string
-  portrait: string
-  role: string
-  biography: string
-  category: string
-  slug: string
-}
-export interface ICategories {
-  id: number
-  name: string
-}
-export interface IContact {
-  id: number
-  name: string
-  email: string
-  category: number
+  brand:string
+  grape:string
   type: string
+  country: string
+  region: string
+  subregion: string
+  amount: number
+  segment: string
+  wine_stopper: string
+  is_organic: number
+  other: string
+  sku: number
+  barcode: string
+  active: number
+  order: number			
 }
-export interface IConsulate {
+export interface IOil {
   id: number
-  location: string
-  gmaps: string
-  city: string
-  postal: string
-  phone: string
-  fax: string
-  instagram: string
-  facebook: string
-  twitter: string
+  name: string
+  brand:string
+  country:string
+  region: string
+  amount: number
+  segment: string
+  sku: number
+  barcode: string
+  active: number
+  order: number
 }
-export interface IAbout {
+export interface IDistilled {
   id: number
-  about: string
-  Image: string
+  name: string
+  brand:string
+  type:string
+  amount: number
+  segment: string
+  other: string
+  sku: number
+  barcode: string
+  active: number
+  order: number
 }

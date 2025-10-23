@@ -1,10 +1,7 @@
 import type {
-  IProject,
-  IEditors,
-  ICategories,
-  IContact,
-  IConsulate,
-  IAbout
+  IWine,
+  IOil,
+  IDistilled
 } from '@/services/models'
 
 import axios from 'axios';
@@ -15,35 +12,19 @@ class DataService {
   private dataCollection = new Map<string, any>()
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_APP_SCHEMA_API_URL
+    this.baseURL = "https://panelconsulate.aguaviva.com.ar/api/"
   }
 
-  getProjects(): Promise<IProject[]> {
-    return this.getData('projects')
+  getWines(): Promise<IWine[]> {
+    return this.getData('wines')
   }
 
-  getEditors(): Promise<IEditors[]> {
-    return this.getData('editors')
+  getOils(): Promise<IOil[]> {
+    return this.getData('oils')
   }
 
-  getEditorsCategories(): Promise<ICategories[]> {
-    return this.getData('editors_cateogries')
-  }
-
-  getContactCategories(): Promise<ICategories[]> {
-    return this.getData('contact_categories')
-  }
-
-  getContact(): Promise<IContact[]> {
-    return this.getData('contact')
-  }
-
-  getConsulate(): Promise<IConsulate[]> {
-    return this.getData('consulate')
-  }
-
-  getAbout(): Promise<IAbout[]> {
-    return this.getData('about')
+  getDistillates(): Promise<IDistilled[]> {
+    return this.getData('distillates')
   }
 
   private getData(table: string): Promise<any[]> {
