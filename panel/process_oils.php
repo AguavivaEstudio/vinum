@@ -3,7 +3,7 @@ ob_start();
 include '_includes.php';
 checkSecurity();
 
-$tableSelected = "20";
+$tableSelected = "14";
 
 $permissions = getTablePermission($tableSelected);
 
@@ -37,7 +37,7 @@ CreateHeadder();
 				$baseDir = str_replace('panel', 'uploads\\', $baseDir);
 				$baseDir = str_replace('\\', '/', $baseDir);
 
-				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
+				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1 AND `rowId` = 2;";
 				$result = ExecuteSql($sSql, null);
 				$sSql = "TRUNCATE TABLE `oils_import`;";
 				ExecuteSql($sSql, null);
@@ -58,18 +58,28 @@ CreateHeadder();
 				if ($archivosProcesados > 0) {
 
 					$sSql = "
-						INSERT INTO `publicaciones` (`titulo`, `editorial`, `precio`, `datosedic`,`autor`, `autor2`, `autor3`,`autor4`,`autor5`,`isbn`,`ano`,`especialidad`, `codigo`, `stock`, `activo`)
-							SELECT CI.`titulo`, 1, CI.`precio`, NULL, 1, 1, 1, 1, 1, NULL, NULL, 1, CI.`codigo`, 0, 0
-						  	FROM `oils_import` AS CI
-						 	WHERE CI.`codigo` NOT IN (SELECT `codigo` FROM `publicaciones` WHERE `codigo` IS NOT NULL)
-						 	GROUP BY CI.`codigo`, CI.`precio`
+						INSERT INTO `oils` ( `id`, `name`, `brand`, `country`, `region`, `amount`, `segment`, `sku`, `barcode`, `active`, `order` )
+							SELECT OI.`id`, OI.`name`, OI.`brand`, OI.`country`, OI.`region`, OI.`amount`, OI.`segment`, OI.`sku`, OI.`barcode`, OI.`active`, OI.`order`
+						  	FROM `oils_import` AS OI
+						 	WHERE OI.`sku` NOT IN (SELECT `sku` FROM `oils` WHERE `sku` IS NOT NULL)
+						 	GROUP BY OI.`sku`
 						;";
 					ExecuteSql($sSql, null);
 
 					$sSql = "
-							UPDATE `publicaciones` AS CL
-							 INNER JOIN `oils_import` AS CI ON CL.`codigo` = CI.`codigo`
-							   SET CL.`precio` = CI.`precio`
+							UPDATE `oils` AS CL
+							 	INNER JOIN `oils_import` AS OI ON CL.`sku` = OI.`sku`
+							   	SET CL.`id` = OI.`id`,
+									CL.`name` = OI.`name`,
+									CL.`brand` = OI.`brand`,
+									CL.`country` = OI.`country`,
+									CL.`region` = OI.`region`,
+									CL.`amount` = OI.`amount`,
+									CL.`segment` = OI.`segment`,
+									CL.`sku` = OI.`sku`,
+									CL.`barcode` = OI.`barcode`,
+									CL.`active` = OI.`active`,
+									CL.`order` = OI.`order`
 							;";
 					ExecuteSql($sSql, null);
 				} else {

@@ -3,7 +3,7 @@ ob_start();
 include '_includes.php';
 checkSecurity();
 
-$tableSelected = "20";
+$tableSelected = "14";
 
 $permissions = getTablePermission($tableSelected);
 
@@ -37,7 +37,7 @@ CreateHeadder();
 				$baseDir = str_replace('panel', 'uploads\\', $baseDir);
 				$baseDir = str_replace('\\', '/', $baseDir);
 
-				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
+				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1 AND `rowId` = 1;";
 				$result = ExecuteSql($sSql, null);
 				$sSql = "TRUNCATE TABLE `wines_import`;";
 				ExecuteSql($sSql, null);
@@ -58,18 +58,34 @@ CreateHeadder();
 				if ($archivosProcesados > 0) {
 
 					$sSql = "
-						INSERT INTO `publicaciones` (`titulo`, `editorial`, `precio`, `datosedic`,`autor`, `autor2`, `autor3`,`autor4`,`autor5`,`isbn`,`ano`,`especialidad`, `codigo`, `stock`, `activo`)
-							SELECT CI.`titulo`, 1, CI.`precio`, NULL, 1, 1, 1, 1, 1, NULL, NULL, 1, CI.`codigo`, 0, 0
-						  	FROM `wines_import` AS CI
-						 	WHERE CI.`codigo` NOT IN (SELECT `codigo` FROM `publicaciones` WHERE `codigo` IS NOT NULL)
-						 	GROUP BY CI.`codigo`, CI.`precio`
+						INSERT INTO `wines` ( `id`, `name`, `brand`, `grape`, `type`, `country`, `region`, `subregion`, `amount`, `segment`, `wine_stopper`, `is_organic`, `other`, `sku`, `barcode`, `active`, `order` )
+							SELECT WI.`id`, WI.`name`, WI.`brand`, WI.`grape`, WI.`type`, WI.`country`, WI.`region`, WI.`subregion`, WI.`amount`, WI.`segment`, WI.`wine_stopper`, WI.`is_organic`, WI.`other`, WI.`sku`, WI.`barcode`, WI.`active`, WI.`order`
+						  	FROM `wines_import` AS WI
+						 	WHERE WI.`sku` NOT IN (SELECT `sku` FROM `wines` WHERE `sku` IS NOT NULL)
+						 	GROUP BY WI.`sku`
 						;";
 					ExecuteSql($sSql, null);
 
 					$sSql = "
-							UPDATE `publicaciones` AS CL
-							 INNER JOIN `wines_import` AS CI ON CL.`codigo` = CI.`codigo`
-							   SET CL.`precio` = CI.`precio`
+							UPDATE `wines` AS CL
+							 	INNER JOIN `wines_import` AS WI ON CL.`sku` = WI.`sku`
+							   	SET CL.`id` = WI.`id`,
+									CL.`name` = WI.`name`,
+									CL.`brand` = WI.`brand`,
+									CL.`grape` = WI.`grape`,
+									CL.`type` = WI.`type`,
+									CL.`country` = WI.`country`,
+									CL.`region` = WI.`region`,
+									CL.`subregion` = WI.`subregion`,
+									CL.`amount` = WI.`amount`,
+									CL.`segment` = WI.`segment`,
+									CL.`wine_stopper` = WI.`wine_stopper`,
+									CL.`is_organic` = WI.`is_organic`,
+									CL.`other` = WI.`other`,
+									CL.`sku` = WI.`sku`,
+									CL.`barcode` = WI.`barcode`,
+									CL.`active` = WI.`active`,
+									CL.`order` = WI.`order`
 							;";
 					ExecuteSql($sSql, null);
 				} else {

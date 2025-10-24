@@ -95,6 +95,7 @@ function logAction($log, $log_detail)
 function importFile($fileName, $tableName)
 {
     global $mysqli;
+    mysqli_options($mysqli, MYSQLI_OPT_LOCAL_INFILE, true);
     $sSql = "LOAD DATA LOCAL INFILE '$fileName'
 			 INTO TABLE $tableName
 			 FIELDS TERMINATED BY ','

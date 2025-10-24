@@ -3,7 +3,7 @@ ob_start();
 include '_includes.php';
 checkSecurity();
 
-$tableSelected = "20";
+$tableSelected = "14";
 
 $permissions = getTablePermission($tableSelected);
 
@@ -37,16 +37,16 @@ CreateHeadder();
 				$baseDir = str_replace('panel', 'uploads\\', $baseDir);
 				$baseDir = str_replace('\\', '/', $baseDir);
 
-				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
+				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1 AND `rowId` = 3;";
 				$result = ExecuteSql($sSql, null);
-				$sSql = "TRUNCATE TABLE `destillates_import`;";
+				$sSql = "TRUNCATE TABLE `distillates_import`;";
 				ExecuteSql($sSql, null);
 				$archivosProcesados = 0;
 				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 					$id = $row['id'];
 					$fileName = $row['fileName'];
 
-					$rowsAffected = importFile($baseDir . $fileName, 'destillates_import');
+					$rowsAffected = importFile($baseDir . $fileName, 'distillates_import');
 
 					$sSql = "UPDATE `sys_files` SET `publish` = 0, `comment` = concat('Procesado: ', now()) WHERE `id` = $id;";
 					ExecuteSql($sSql, null);
@@ -58,18 +58,28 @@ CreateHeadder();
 				if ($archivosProcesados > 0) {
 
 					$sSql = "
-						INSERT INTO `publicaciones` (`titulo`, `editorial`, `precio`, `datosedic`,`autor`, `autor2`, `autor3`,`autor4`,`autor5`,`isbn`,`ano`,`especialidad`, `codigo`, `stock`, `activo`)
-							SELECT CI.`titulo`, 1, CI.`precio`, NULL, 1, 1, 1, 1, 1, NULL, NULL, 1, CI.`codigo`, 0, 0
-						  	FROM `destillates_import` AS CI
-						 	WHERE CI.`codigo` NOT IN (SELECT `codigo` FROM `publicaciones` WHERE `codigo` IS NOT NULL)
-						 	GROUP BY CI.`codigo`, CI.`precio`
+						INSERT INTO `distillates` ( `id`, `name`, `brand`, `type`, `amount`, `segment`, `other`, `sku`, `barcode`, `active`, `order` )
+							SELECT DI.`id`, DI.`name`, DI.`brand`, DI.`type`, DI.`amount`, DI.`segment`, DI.`other`, DI.`sku`, DI.`barcode`, DI.`active`, DI.`order`
+						  	FROM `distillates_import` AS DI
+						 	WHERE DI.`sku` NOT IN (SELECT `sku` FROM `distillates` WHERE `sku` IS NOT NULL)
+						 	GROUP BY DI.`sku`
 						;";
 					ExecuteSql($sSql, null);
 
 					$sSql = "
-							UPDATE `publicaciones` AS CL
-							 INNER JOIN `destillates_import` AS CI ON CL.`codigo` = CI.`codigo`
-							   SET CL.`precio` = CI.`precio`
+							UPDATE `distillates` AS CL
+							 	INNER JOIN `distillates_import` AS DI ON CL.`sku` = DI.`sku`
+							   	SET CL.`id` = DI.`id`,
+									CL.`name` = DI.`name`,
+									CL.`brand` = DI.`brand`,
+									CL.`type` = DI.`type`,
+									CL.`amount` = DI.`amount`,
+									CL.`segment` = DI.`segment`,
+									CL.`other` = DI.`other`,
+									CL.`sku` = DI.`sku`,
+									CL.`barcode` = DI.`barcode`,
+									CL.`active` = DI.`active`,
+									CL.`order` = DI.`order`
 							;";
 					ExecuteSql($sSql, null);
 				} else {

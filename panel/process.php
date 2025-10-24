@@ -3,17 +3,11 @@ ob_start();
 include '_includes.php';
 checkSecurity();
 
-$tableSelected = "20";
-
+$tableSelected = "14";
 $permissions = getTablePermission($tableSelected);
 
-if (isset($_REQUEST['id'])) {
-	$id = $_REQUEST['id'];
-	$titleNewUpdate = ' Update ';
-} else {
-	$id = "";
-	$titleNewUpdate = ' New ';
-}
+$id = $_REQUEST['id'] ?? "";
+$titleNewUpdate = $id ? ' Update ' : ' New ';
 
 $sSql = "SELECT `group`, `menuText`, `table` FROM `sys_tables` WHERE `id` = ?;";
 $result = ExecuteSql($sSql, array(null, $tableSelected));
@@ -30,53 +24,131 @@ CreateHeadder();
 			createMenu();
 			echo "<h1 id='divError' class='error'></h1>";
 
-			if (($permissions['view'] != 1) || (is_null($table))) {
-				echo "<h1 class='error'>" . getLangVar('AuthorizationDenied') . "</hi>";
+			if (($permissions['view'] != 1) || is_null($table)) {
+				echo "<h1 class='error'>" . getLangVar('AuthorizationDenied') . "</h1>";
 			} else {
 				$baseDir = dirname(__FILE__);
 				$baseDir = str_replace('panel', 'uploads\\', $baseDir);
-				$baseDir = str_replace('\\', '/', $baseDir);
+				$baseDir = str_replace('\\', '/', $baseDir) . '/';
 
-				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
-				$result = ExecuteSql($sSql, null);
-				$sSql = "TRUNCATE TABLE `wines_import`;";
-				ExecuteSql($sSql, null);
+			function processImport($baseDir, $rowId, $importTable, $finalTable, $insertFields, $updateFields) {
+				// Get files
+				$sSql = "SELECT `id`, `fileName` 
+						FROM `sys_files`
+						WHERE `tableName` = 'data_files'
+						AND `columnName` = 'file_clientes'
+						AND `publish` = 1
+						AND `rowId` = ?;";
+				$result = ExecuteSql($sSql, array(null, $rowId));
+
+				ExecuteSql("TRUNCATE TABLE `$importTable`;", null);
+
 				$archivosProcesados = 0;
+
+				// Import each file
 				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 					$id = $row['id'];
 					$fileName = $row['fileName'];
 
-					$rowsAffected = importFile($baseDir . $fileName, 'wines_import');
+					$rowsAffected = importFile($baseDir . $fileName, $importTable);
 
+					// Mark file as processed
 					$sSql = "UPDATE `sys_files` SET `publish` = 0, `comment` = concat('Procesado: ', now()) WHERE `id` = $id;";
 					ExecuteSql($sSql, null);
 
-					echo "<div>Archivo procesado: $fileName - Registros: $rowsAffected</div><br><br>$baseDir$fileName";
+					echo "<div>Archivo procesado: <b>$fileName</b> - Registros importados: $rowsAffected</div>";
 					$archivosProcesados++;
 				}
 
+				// Insert and update into final table
 				if ($archivosProcesados > 0) {
 
 					$sSql = "
-						INSERT INTO `publicaciones` (`titulo`, `editorial`, `precio`, `datosedic`,`autor`, `autor2`, `autor3`,`autor4`,`autor5`,`isbn`,`ano`,`especialidad`, `codigo`, `stock`, `activo`)
-							SELECT CI.`titulo`, 1, CI.`precio`, NULL, 1, 1, 1, 1, 1, NULL, NULL, 1, CI.`codigo`, 0, 0
-						  	FROM `wines_import` AS CI
-						 	WHERE CI.`codigo` NOT IN (SELECT `codigo` FROM `publicaciones` WHERE `codigo` IS NOT NULL)
-						 	GROUP BY CI.`codigo`, CI.`precio`
-						;";
+						INSERT INTO `$finalTable` ($insertFields)
+							SELECT $insertFields
+							FROM `$importTable`
+							WHERE `sku` NOT IN (SELECT `sku` FROM `$finalTable` WHERE `sku` IS NOT NULL)
+							GROUP BY `sku`;";
 					ExecuteSql($sSql, null);
 
 					$sSql = "
-							UPDATE `publicaciones` AS CL
-							 INNER JOIN `wines_import` AS CI ON CL.`codigo` = CI.`codigo`
-							   SET CL.`precio` = CI.`precio`, CL.`stock` = CI.`stock`
-							;";
+							UPDATE `$finalTable` AS F
+								INNER JOIN `$importTable` AS I ON F.`sku` = I.`sku`
+								SET $updateFields;";
 					ExecuteSql($sSql, null);
+
 				} else {
-					echo "<div>No existen archivos para procesar</div>";
+					echo "<div>No existen archivos para procesar ($finalTable)</div>";
 				}
 			}
-			?>
-    </div>
+
+			//WINES 
+			processImport(
+				$baseDir,
+				1,
+				'wines_import',
+				'wines',
+				" `id`, `name`, `brand`, `grape`, `type`, `country`, `region`, `subregion`, `amount`, `segment`, `wine_stopper`, `is_organic`, `other`, `sku`, `barcode`, `active`, `order` ",
+				"F.`id` = I.`id`,
+				F.`name` = I.`name`,
+				F.`brand` = I.`brand`,
+				F.`grape` = I.`grape`,
+				F.`type` = I.`type`,
+				F.`country` = I.`country`,
+				F.`region` = I.`region`,
+				F.`subregion` = I.`subregion`,
+				F.`amount` = I.`amount`,
+				F.`segment` = I.`segment`,
+				F.`wine_stopper` = I.`wine_stopper`,
+				F.`is_organic` = I.`is_organic`,
+				F.`other` = I.`other`,
+				F.`sku` = I.`sku`,
+				F.`barcode` = I.`barcode`,
+				F.`active` = I.`active`,
+				F.`order` = I.`order`"
+			);
+
+			//OILS 
+			processImport(
+				$baseDir,
+				2,
+				'oils_import',
+				'oils',
+				" `id`, `name`, `brand`, `country`, `region`, `amount`, `segment`, `sku`, `barcode`, `active`, `order` ",
+				"F.`id` = I.`id`,
+				F.`name` = I.`name`,
+				F.`brand` = I.`brand`,
+				F.`country` = I.`country`,
+				F.`region` = I.`region`,
+				F.`amount` = I.`amount`,
+				F.`segment` = I.`segment`,
+				F.`sku` = I.`sku`,
+				F.`barcode` = I.`barcode`,
+				F.`active` = I.`active`,
+				F.`order` = I.`order`"
+			);
+
+			//DISTILLATES
+			processImport(
+				$baseDir,
+				3, // rowId for distillates
+				'distillates_import',
+				'distillates',
+				" `id`, `name`, `brand`, `type`, `amount`, `segment`, `other`, `sku`, `barcode`, `active`, `order` ",
+				"F.`id` = I.`id`,
+				F.`name` = I.`name`,
+				F.`brand` = I.`brand`,
+				F.`type` = I.`type`,
+				F.`amount` = I.`amount`,
+				F.`segment` = I.`segment`,
+				F.`other` = I.`other`,
+				F.`sku` = I.`sku`,
+				F.`barcode` = I.`barcode`,
+				F.`active` = I.`active`,
+				F.`order` = I.`order`"
+			);
+		}
+?>
+</div>
 </body>
 </html>
