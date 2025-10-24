@@ -37,7 +37,7 @@ CreateHeadder();
 				$baseDir = str_replace('panel', 'uploads\\', $baseDir);
 				$baseDir = str_replace('\\', '/', $baseDir);
 
-				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'wine_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
+				$sSql = "SELECT `id`, `fileName` FROM `sys_files` WHERE `tableName` = 'data_files' AND `columnName` = 'file_clientes' AND `publish` = 1;";
 				$result = ExecuteSql($sSql, null);
 				$sSql = "TRUNCATE TABLE `wines_import`;";
 				ExecuteSql($sSql, null);
