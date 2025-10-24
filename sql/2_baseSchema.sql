@@ -145,6 +145,20 @@ ALTER TABLE `distillates`
 ALTER TABLE `distillates`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
+CREATE TABLE `sku_images` (
+  `id` int(10) NOT NULL,
+  `name` varchar(255) DEFAULT NULL COMMENT 'Registro',
+  `file_image` int(1) DEFAULT NULL COMMENT 'Imagenes: "[SKU]-image"'
+) 
+
+INSERT INTO `sku_images` (`id`, `name`, `file_image`) VALUES
+(2, 'Placeholder', NULL);
+
+ALTER TABLE `sku_images`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `sku_images`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 ###INSERTS
 

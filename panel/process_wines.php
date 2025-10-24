@@ -47,6 +47,8 @@ CreateHeadder();
 					$fileName = $row['fileName'];
 
 					$rowsAffected = importFile($baseDir . $fileName, 'wines_import');
+					
+					ExecuteSql("UPDATE `wines_import` SET `active` = 1 WHERE `active` IS NULL;", null);
 
 					$sSql = "UPDATE `sys_files` SET `publish` = 0, `comment` = concat('Procesado: ', now()) WHERE `id` = $id;";
 					ExecuteSql($sSql, null);

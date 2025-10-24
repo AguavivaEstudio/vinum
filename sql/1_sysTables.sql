@@ -139,7 +139,6 @@ CREATE TABLE IF NOT EXISTS `vwuserspermissions` (
 
 DROP TABLE IF EXISTS `vwuserspermissions`;
 
--- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vwuserspermissions`  AS SELECT `usr`.`id` AS `id`, `usr`.`email` AS `email`, `usr`.`password` AS `password`, `usr`.`profile` AS `profile`, `pro`.`sysadmin` AS `sysadmin`, `per`.`sys_tables` AS `sys_tables`, `per`.`sys_tags` AS `sys_tags`, `per`.`view` AS `view`, `per`.`add` AS `add`, `per`.`update` AS `update`, `per`.`remove` AS `remove`, `per`.`full` AS `full` FROM ((`sys_users` `usr` left join `sys_profiles` `pro` on((`usr`.`profile` = `pro`.`id`))) left join `sys_permissions` `per` on((`pro`.`id` = `per`.`sys_profiles`))) WHERE (`usr`.`active` = 1) ;
 
 ALTER TABLE `sys_config`
   ADD PRIMARY KEY (`id`);

@@ -48,6 +48,10 @@ CreateHeadder();
 
 					$rowsAffected = importFile($baseDir . $fileName, 'distillates_import');
 
+					// if active is empty, insert it with 1
+					ExecuteSql("UPDATE `distillates_import` SET `active` = 1 WHERE `active` IS NULL;", null);
+
+
 					$sSql = "UPDATE `sys_files` SET `publish` = 0, `comment` = concat('Procesado: ', now()) WHERE `id` = $id;";
 					ExecuteSql($sSql, null);
 
