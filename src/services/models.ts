@@ -15,7 +15,9 @@ export interface IWine {
   sku: number
   barcode: string
   active: number
-  order: number			
+  order: number
+  sku_image: string
+  slug: string
 }
 export interface IOil {
   id: number
@@ -29,6 +31,8 @@ export interface IOil {
   barcode: string
   active: number
   order: number
+  sku_image: string
+  slug: string
 }
 export interface IDistilled {
   id: number
@@ -42,4 +46,6 @@ export interface IDistilled {
   barcode: string
   active: number
   order: number
+  sku_image: string
+  slug: string
 }

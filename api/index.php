@@ -22,13 +22,13 @@ $rowsArray = [];
 // Query mapping
 $queries = [
     'wines' => "SELECT T1.*
-                    FROM contact AS T1 WHERE T1.active = 1 ORDER BY order DESC;",
+                    FROM wines AS T1 WHERE T1.active = 1 ORDER BY T1.order DESC;",
 
     'oils' => "SELECT T1.*
-                    FROM oils AS T1 WHERE T1.active = 1 ORDER BY order DESC;",
+                    FROM oils AS T1 WHERE T1.active = 1 ORDER BY T1.order DESC;",
 
     'distillates' => "SELECT T1.*
-                    FROM distillates AS T1 WHERE T1.active = 1 ORDER BY order DESC;",
+                    FROM distillates AS T1 WHERE T1.active = 1 ORDER BY T1.order DESC;",
 ];
 
 function toSlug($string, $id = null)
@@ -66,13 +66,14 @@ function toSlug($string, $id = null)
 if (isset($queries[$tableSelected])) {
     $result = $pdo->query($queries[$tableSelected]);
     $rows = $result->fetchAll(PDO::FETCH_ASSOC);
-    // Slug
-    if ($tableSelected === 'blogs' || $tableSelected === 'blogs_featured') {
+    // Images SKU
+    if ($tableSelected === 'wines' || $tableSelected === 'oils' || $tableSelected === 'distillates') {
         foreach ($rows as &$row) {
-            $row['slug'] = toSlug($row['slugName']);
+            $row['sku_image'] = $row['sku'] . '-image' ;
+            $row['slug'] = toSlug($row['name']);
         }
     }
-    // Content
+    /*// Content
     if ($tableSelected === 'blogs') {
         foreach ($rows as &$row) {
             if (!is_null($row['content_block'])) {
@@ -94,7 +95,7 @@ if (isset($queries[$tableSelected])) {
                 }
             }
         }
-    }
+    }*/
 
     // Output response in JSON format
     echo json_encode($rows, JSON_NUMERIC_CHECK);
